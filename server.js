@@ -1,0 +1,18 @@
+const express = require('express')
+const server = express()
+const cors = require('cors')
+const dotenv = require('dotenv')
+dotenv.config()
+const connectDB = require('./utils/connectDB')
+connectDB('welthoid')
+const errorHandler = require('./middleware/errorHandler')
+
+server.use(cors())
+server.use(express.json())
+server.use("/api/user", require("./router/user"))
+server.use("/api/trade", require("./router/trade"))
+server.use("/api/news", require("./router/news"))
+server.use(errorHandler.notFound)
+server.use(errorHandler.otherError)
+const PORT = process.env.PORT || 5000
+server.listen(PORT, console.log(`Server is live on port ${PORT}`))
