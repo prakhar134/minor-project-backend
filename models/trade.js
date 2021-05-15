@@ -11,7 +11,11 @@ const details = {
     },
     transaction: {
         type: Number,
-        required: true
+        required: true  
+    },
+    threshold: {
+        type: Number,
+        default: null
     }
 }
 

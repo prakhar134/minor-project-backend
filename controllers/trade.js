@@ -4,21 +4,23 @@ const User = require('../models/user')
 
 const tradeController = {
     buyStock: asyncHandler(async (req, res) => {
-        let { stockName, quantity, buyPrice } = req.body
+        let { stockName, quantity, buyPrice, threshold } = req.body
         quantity = parseFloat(quantity)
         buyPrice = parseFloat(buyPrice)
         const transaction = parseFloat((quantity * buyPrice).toFixed(2))
         const detail = {
             price: buyPrice,
             quantity,
-            transaction
+            transaction,
+            threshold
         }
+        console.log(threshold)
         const user = await User.findOne({ googleId: req.user }).populate('currentTrades', 'stockName _id')
         if (user.coin < transaction)
             throw new Error("Not enough coin")
         let trade = user.currentTrades.filter((trade) => trade.stockName === stockName)
         if (trade.length === 0) {
-            const newTrade = new Trade({ stockName, trade: 'buy', buy: detail, user: req.user })
+            const newTrade = new Trade({ stockName, trade: 'buy', buy: detail, user: req.user})
             await newTrade.save()
             user.currentTrades = [...user.currentTrades, newTrade._id]
             res.json(newTrade)
